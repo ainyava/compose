@@ -1,0 +1,37 @@
+services:
+
+  clickhouse-01:
+    image: "docker.mci.dev/clickhouse/clickhouse-server"
+    container_name: clickhouse-01
+    volumes:
+      - ${PWD}/node1/config/config.xml:/etc/clickhouse-server/config.d/config.xml
+      - ${PWD}/node1/config/users.xml:/etc/clickhouse-server/users.d/users.xml
+      - ${PWD}/node1/data:/var/lib/clickhouse
+    ports:
+      - "18123:8123"
+      - "19000:9000"
+  clickhouse-keeper-01:
+    image: "clickhouse/clickhouse-keeper"
+    container_name: clickhouse-keeper-01
+    volumes:
+      - ${PWD}/node1/config/keeper_config.xml:/etc/clickhouse-keeper/keeper_config.xml
+    ports:
+      - "19181:9181"
+
+  clickhouse-02:
+    image: "docker.mci.dev/clickhouse/clickhouse-server"
+    container_name: clickhouse-02
+    volumes:
+      - ${PWD}/node2/config/config.xml:/etc/clickhouse-server/config.d/config.xml
+      - ${PWD}/node2/config/users.xml:/etc/clickhouse-server/users.d/users.xml
+      - ${PWD}/node2/data:/var/lib/clickhouse
+    ports:
+      - "28123:8123"
+      - "29000:9000"
+  clickhouse-keeper-02:
+    image: "clickhouse/clickhouse-keeper"
+    container_name: clickhouse-keeper-02
+    volumes:
+      - ${PWD}/node2/config/keeper_config.xml:/etc/clickhouse-keeper/keeper_config.xml
+    ports:
+      - "29181:9181"
