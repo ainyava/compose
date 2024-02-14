@@ -1,0 +1,42 @@
+services:
+  redis:
+    image: redis:alpine
+    restart: always
+    ports:
+      - "${REDISPORT}:${REDISPORT}"
+    env_file:
+      - .env
+    command: redis-server --save 20 1 --loglevel warning --requirepass ${REDISPASSWORD}
+    volumes:
+      - ./redis:/data
+  ray-head:
+    image: ${RAY_IMAGE}
+    depends_on:
+      - redis
+    ports:
+      - "${DASHBOARDPORT}:${DASHBOARDPORT}"
+      - "${HEADNODEPORT}:${HEADNODEPORT}"
+    env_file:
+      - .env
+    command: "ray start --head --dashboard-port=${DASHBOARDPORT} --port=${REDISPORT} --dashboard-host=${HOST} --redis-password=${REDISPASSWORD} --temp-dir=/home/ray/tmp/ --block"
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: '4g'
+  ray-worker:
+    image: ${RAY_IMAGE}
+    depends_on:
+      - redis
+      - ray-head
+    env_file:
+      - .env
+    command: "ray start --address=ray-head:${REDISPORT} --redis-password=${REDISPASSWORD} --num-cpus=${NUM_CPU_WORKER} --temp-dir=/home/ray/tmp/ --block"
+    shm_size: 3g
+    deploy:
+      mode: replicated
+      replicas: ${NUM_WORKERS}
+      resources:
+        limits:
+          cpus: ${NUM_CPU_WORKER}
+          memory: '2g'
