@@ -13,10 +13,11 @@ services:
       - "8002:8080"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
-  nginx:
-    image: "nginx:alpine"
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.ainyava.rule=Host(`ainyava.localhost`)"
-      - "traefik.http.routers.ainyava.entrypoints=web"
-      - "traefik.http.services.ainyava.loadbalancer.server.scheme=h2c"
+  # example usage:
+  # nginx:
+  #   image: "nginx:alpine"
+  #   labels:
+  #     - "traefik.enable=true"
+  #     - "traefik.http.routers.ainyava.rule=Host(`ainyava.localhost`)"
+  #     - "traefik.http.routers.ainyava.entrypoints=web"
+  #     - "traefik.http.services.ainyava.loadbalancer.server.scheme=h2c"
