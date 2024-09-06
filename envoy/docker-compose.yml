@@ -1,0 +1,8 @@
+services:
+  envoy:
+    image: envoyproxy/envoy:v1.31.0
+    container_name: envoy
+    ports:
+      - "8001:80"
+    volumes:
+      - ./envoy.yaml:/etc/envoy/envoy.yaml
